@@ -1,0 +1,42 @@
+---
+title: "density-estimation"
+author: "Kenji Kondo"
+date: "2019/9/7"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## カーネル密度推定
+
+`density()`関数により、データの確率密度関数を推定することが出来ます。
+
+```{r}
+library(MASS)
+medv <- Boston$medv  ## median values of home
+d <- density(medv)
+```
+
+また、`density()`関数で推定した確率密度関数を、`plot()`関数により、描画することが可能です。これにより、データがどのように分布しているかが分かります。例えば、本ケースでは、データの二峰性が示唆されています。
+
+```{r}
+plot(d, main="Density of home values")
+```
+
+カーネル密度推定は、データの各標本の位置を中心とした多数のカーネル関数を足し合わせることで、密度推定を行います。標本数が少ない程、標本の間を埋めるためにカーネル関数の幅を広げる必要があります。例えば、カーネル関数の幅を故意に小さく指定すると、滑らかな確率密度関数が得られません。
+
+```{r}
+plot(density(medv,
+             bw=0.1  ## small bandwidth of kernels
+             ),
+     main="Density of home values")
+```
+
+カーネル関数の幅（`bw`）を指定しない場合には、標本数に応じて自動てきに幅が調整されます。従って、特別な理由がない限り、直接`bw`を指定する必要はありません。ただし、`density()`関数のヘルプ（Rのコンソールで`help(density)`を実行すると確認できます）によれば、`bw="SJ"`と指定することが推奨されている（デフォルト設定は、過去のコードとの互換性目的）ため、通常はそのように指定するのが良いと思われます。
+
+```{r}
+plot(density(medv, bw="SJ"),
+     main="Density of home values")
+```
